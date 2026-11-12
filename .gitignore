@@ -1,0 +1,14 @@
+﻿# --- Segredos e dados pessoais: NUNCA commitar ---
+.env
+init.json
+
+# Notas de projeto (reunioes, dailies, contatos...) ficam so na maquina de cada pessoa.
+# Apenas o README.md explicativo de docs/ e versionado.
+docs/*
+!docs/README.md
+
+# Dados e build locais
+lembretes-api/data/
+*.db
+*.db-journal
+target/

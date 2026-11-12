@@ -1,0 +1,13 @@
+{
+  "nome": "SEU NOME",
+  "email": "voce@exemplo.com",
+  "idioma": "pt-BR",
+  "quadro_a_fazer_url": "",
+  "times": {
+    "time-a": { "meet_fixo": "https://meet.google.com/xxx-xxxx-xxx" },
+    "time-b": { "meet_fixo": "" }
+  },
+  "glossario": {
+    "SIGLA": "O que significa e como as transcrições costumam escrever errado."
+  }
+}
