@@ -9,18 +9,13 @@ import dev.lembretes.lembrete.core.application.MontadorAviso;
 import dev.lembretes.lembrete.core.application.RemoverLembreteService;
 import dev.lembretes.lembrete.core.application.TestarLembreteService;
 import dev.lembretes.lembrete.core.application.port.DisparoRepository;
-import dev.lembretes.lembrete.core.application.port.LeitorContextoPort;
 import dev.lembretes.lembrete.core.application.port.LembreteRepository;
 import dev.lembretes.lembrete.core.application.port.NotificadorPort;
-import dev.lembretes.lembrete.core.application.port.RedatorMensagemPort;
 import dev.lembretes.lembrete.core.application.port.RelogioPort;
-import dev.lembretes.lembrete.infra.claude.ClaudeRedatorMensagem;
 import dev.lembretes.lembrete.infra.discord.DiscordWebhookNotificador;
-import dev.lembretes.lembrete.infra.filesystem.FileSystemLeitorContexto;
 import dev.lembretes.lembrete.infra.jobs.LembreteScheduler;
 import dev.lembretes.lembrete.infra.persistence.JdbcDisparoRepository;
 import dev.lembretes.lembrete.infra.persistence.JdbcLembreteRepository;
-import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -58,19 +53,8 @@ public class LembretesConfig {
     }
 
     @Bean
-    LeitorContextoPort leitorContexto(@Value("${lembretes.contexto-raiz}") String raiz) {
-        return new FileSystemLeitorContexto(Path.of(raiz));
-    }
-
-    @Bean
-    RedatorMensagemPort redator(@Value("${lembretes.claude.api-key}") String chave,
-                                @Value("${lembretes.claude.modelo}") String modelo, ObjectMapper json) {
-        return new ClaudeRedatorMensagem(chave, modelo, json);
-    }
-
-    @Bean
-    MontadorAviso montadorAviso(LeitorContextoPort leitor, RedatorMensagemPort redator) {
-        return new MontadorAviso(leitor, redator);
+    MontadorAviso montadorAviso() {
+        return new MontadorAviso();
     }
 
     @Bean

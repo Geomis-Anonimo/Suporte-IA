@@ -27,7 +27,7 @@ public class CriarLembreteService {
                 .orElseThrow(() -> new DadosInvalidosException("A data/hora informada ja passou"));
         int antecedencia = cmd.antecedenciaMin() == null ? antecedenciaPadraoMin : cmd.antecedenciaMin();
         try {
-            return new Lembrete(id, cmd.titulo(), cmd.descricao(), cmd.recorrencia(), antecedencia,
+            return new Lembrete(id, cmd.titulo(), cmd.descricao(), cmd.mensagem(), cmd.recorrencia(), antecedencia,
                     cmd.contextoMd(), cmd.participantes(), ocorrencia, true, criadoEm == null ? agora : criadoEm);
         } catch (IllegalArgumentException e) {
             throw new DadosInvalidosException(e.getMessage());

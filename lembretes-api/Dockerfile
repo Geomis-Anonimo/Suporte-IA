@@ -12,7 +12,6 @@ WORKDIR /app
 RUN mkdir -p /data
 COPY --from=build /app/target/lembretes-api-*.jar app.jar
 ENV SERVER_ADDRESS=0.0.0.0 \
-    SPRING_DATASOURCE_URL=jdbc:sqlite:/data/lembretes.db \
-    LEMBRETES_CONTEXTO_RAIZ=/contexto
+    SPRING_DATASOURCE_URL=jdbc:sqlite:/data/lembretes.db
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]

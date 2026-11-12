@@ -2,6 +2,7 @@ CREATE TABLE IF NOT EXISTS lembrete (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   titulo TEXT NOT NULL,
   descricao TEXT,
+  mensagem TEXT,
   rec_tipo TEXT NOT NULL,
   rec_data_hora TEXT,
   rec_hora TEXT,

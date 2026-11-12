@@ -12,7 +12,5 @@ services:
     environment:
       TZ: America/Sao_Paulo
       DISCORD_WEBHOOK_URL: ${DISCORD_WEBHOOK_URL:-}
-      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
     volumes:
       - ./lembretes-api/data:/data   # SQLite fica em lembretes-api/data/lembretes.db
-      - ./docs:/contexto:ro           # pasta docs/ (os .md de contexto), somente leitura

@@ -8,6 +8,7 @@ Status: **refinado e implementado** em 2026-11-12. Documentação atual: [README
 - **SQLite** em `lembretes-api/data/lembretes.db`.
 - Antecedência padrão **5 min**; o job pega o que está a até 6 min e o texto é escrito em linguagem natural por IA (Claude), com texto padrão de fallback.
 - Pasta `lembretes-api`, Maven. Webhook só por variável de ambiente (`.env`).
+- **Revisão (2026-11-12):** sem IA/chave de API na aplicação. O texto em linguagem natural é escrito pelo Claude da sessão ao cadastrar (campo `mensagem`), a partir de `docs/` e da conversa; quando surge novidade sobre o assunto, o Claude atualiza o lembrete via `PUT`. Removidos: adaptador Claude/Anthropic, leitor de `.md` e o mount de `docs/` no container. `contextoMd` virou só referência exibida no aviso.
 - Mudanças em relação ao rascunho abaixo: removido o campo `canais`; participantes são objetos `{nome, detalhe}`; pacote `dev.lembretes.lembrete`; Java 17.
 
 ---

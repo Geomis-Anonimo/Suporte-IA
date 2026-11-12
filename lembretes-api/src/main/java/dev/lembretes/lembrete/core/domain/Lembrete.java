@@ -7,13 +7,16 @@ import java.util.List;
 /**
  * Lembrete de uma reuniao/rotina.
  *
+ * @param mensagem          texto em linguagem natural, escrito pelo Claude ao cadastrar (a partir do contexto
+ *                          em docs/ ou da sessao); e o corpo do aviso
  * @param proximaOcorrencia quando o evento acontece (nulo se encerrado)
- * @param contextoMd        caminho do .md que contextualiza o assunto (opcional)
+ * @param contextoMd        caminho do .md que contextualiza o assunto (so referencia, aparece no aviso)
  */
 public record Lembrete(
         Long id,
         String titulo,
         String descricao,
+        String mensagem,
         Recorrencia recorrencia,
         int antecedenciaMin,
         String contextoMd,
@@ -35,12 +38,12 @@ public record Lembrete(
     }
 
     public Lembrete comId(long novoId) {
-        return new Lembrete(novoId, titulo, descricao, recorrencia, antecedenciaMin, contextoMd,
+        return new Lembrete(novoId, titulo, descricao, mensagem, recorrencia, antecedenciaMin, contextoMd,
                 participantes, proximaOcorrencia, ativo, criadoEm);
     }
 
     public Lembrete comOcorrencia(Instant ocorrencia, boolean ativo) {
-        return new Lembrete(id, titulo, descricao, recorrencia, antecedenciaMin, contextoMd,
+        return new Lembrete(id, titulo, descricao, mensagem, recorrencia, antecedenciaMin, contextoMd,
                 participantes, ocorrencia, ativo, criadoEm);
     }
 }

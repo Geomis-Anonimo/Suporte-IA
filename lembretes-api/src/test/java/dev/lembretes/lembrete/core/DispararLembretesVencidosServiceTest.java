@@ -21,6 +21,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -56,7 +57,7 @@ class DispararLembretesVencidosServiceTest {
             if (discordFora) throw new NotificadorPort.NotificacaoException("fora");
             enviadas.add(msg);
         };
-        var montador = new MontadorAviso(c -> Optional.of("# Estado atual\nIntegracao em producao"), p -> Optional.empty());
+        var montador = new MontadorAviso();
         servico = new DispararLembretesVencidosService(repo, disparos, notificador, montador, relogio,
                 Duration.ofMinutes(1), Duration.ofMinutes(10));
     }
@@ -64,6 +65,7 @@ class DispararLembretesVencidosServiceTest {
     private Lembrete reuniao() {
         Instant ocorrencia = LocalDateTime.parse("2026-11-13T15:00:00").atZone(SP).toInstant();
         return new Lembrete(1L, "Alinhamento Mercado Pago", null,
+                "Vamos fechar a subida em producao; ficou pendente validar o webhook.",
                 new Recorrencia.Unica(LocalDateTime.parse("2026-11-13T15:00:00")), 5, "guardian/x.md",
                 List.of(new Participante("Mario", "empresa X")), ocorrencia, true, agora);
     }
@@ -73,6 +75,7 @@ class DispararLembretesVencidosServiceTest {
         banco.add(reuniao());
         assertEquals(1, servico.executar());
         assertTrue(enviadas.get(0).contains("Daqui 6 min"));
+        assertTrue(enviadas.get(0).contains("ficou pendente validar o webhook"));
         assertTrue(enviadas.get(0).contains("Mario (empresa X)"));
         assertTrue(enviadas.get(0).contains("guardian/x.md"));
         assertFalse(banco.get(0).ativo());

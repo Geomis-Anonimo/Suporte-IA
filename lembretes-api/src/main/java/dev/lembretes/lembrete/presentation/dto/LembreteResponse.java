@@ -9,6 +9,7 @@ public record LembreteResponse(
         Long id,
         String titulo,
         String descricao,
+        String mensagem,
         RecorrenciaDto recorrencia,
         int antecedenciaMin,
         String contextoMd,
@@ -18,7 +19,7 @@ public record LembreteResponse(
         boolean ativo) {
 
     public static LembreteResponse de(Lembrete l, ZoneId fuso) {
-        return new LembreteResponse(l.id(), l.titulo(), l.descricao(), RecorrenciaDto.de(l.recorrencia()),
+        return new LembreteResponse(l.id(), l.titulo(), l.descricao(), l.mensagem(), RecorrenciaDto.de(l.recorrencia()),
                 l.antecedenciaMin(), l.contextoMd(), l.participantes().stream().map(ParticipanteDto::de).toList(),
                 l.proximaOcorrencia() == null ? null : l.proximaOcorrencia().atZone(fuso),
                 l.proximoDisparo() == null ? null : l.proximoDisparo().atZone(fuso), l.ativo());

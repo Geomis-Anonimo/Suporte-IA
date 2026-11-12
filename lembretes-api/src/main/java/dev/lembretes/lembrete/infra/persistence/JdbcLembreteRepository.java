@@ -38,21 +38,21 @@ public class JdbcLembreteRepository implements LembreteRepository {
         if (l.id() == null) {
             KeyHolder keys = new GeneratedKeyHolder();
             jdbc.sql("""
-                    INSERT INTO lembrete (titulo, descricao, rec_tipo, rec_data_hora, rec_hora, rec_dia_semana,
-                      rec_dia_mes, antecedencia_min, contexto_md, participantes_json, proxima_ocorrencia,
-                      proximo_disparo, ativo, criado_em)
-                    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)""")
-                    .params(l.titulo(), l.descricao(), rec[0], rec[1], rec[2], rec[3], rec[4], l.antecedenciaMin(),
+                    INSERT INTO lembrete (titulo, descricao, mensagem, rec_tipo, rec_data_hora, rec_hora,
+                      rec_dia_semana, rec_dia_mes, antecedencia_min, contexto_md, participantes_json,
+                      proxima_ocorrencia, proximo_disparo, ativo, criado_em)
+                    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""")
+                    .params(l.titulo(), l.descricao(), l.mensagem(), rec[0], rec[1], rec[2], rec[3], rec[4], l.antecedenciaMin(),
                             l.contextoMd(), participantesJson(l), millis(l.proximaOcorrencia()),
                             millis(l.proximoDisparo()), l.ativo() ? 1 : 0, l.criadoEm().toEpochMilli())
                     .update(keys);
             return l.comId(keys.getKey().longValue());
         }
         jdbc.sql("""
-                UPDATE lembrete SET titulo=?, descricao=?, rec_tipo=?, rec_data_hora=?, rec_hora=?,
+                UPDATE lembrete SET titulo=?, descricao=?, mensagem=?, rec_tipo=?, rec_data_hora=?, rec_hora=?,
                   rec_dia_semana=?, rec_dia_mes=?, antecedencia_min=?, contexto_md=?, participantes_json=?,
                   proxima_ocorrencia=?, proximo_disparo=?, ativo=? WHERE id=?""")
-                .params(l.titulo(), l.descricao(), rec[0], rec[1], rec[2], rec[3], rec[4], l.antecedenciaMin(),
+                .params(l.titulo(), l.descricao(), l.mensagem(), rec[0], rec[1], rec[2], rec[3], rec[4], l.antecedenciaMin(),
                         l.contextoMd(), participantesJson(l), millis(l.proximaOcorrencia()),
                         millis(l.proximoDisparo()), l.ativo() ? 1 : 0, l.id())
                 .update();
@@ -125,7 +125,7 @@ public class JdbcLembreteRepository implements LembreteRepository {
         long ocorrencia = rs.getLong("proxima_ocorrencia");
         boolean semOcorrencia = rs.wasNull();
         try {
-            return new Lembrete(rs.getLong("id"), rs.getString("titulo"), rs.getString("descricao"), recorrencia(rs),
+            return new Lembrete(rs.getLong("id"), rs.getString("titulo"), rs.getString("descricao"), rs.getString("mensagem"), recorrencia(rs),
                     rs.getInt("antecedencia_min"), rs.getString("contexto_md"),
                     json.readValue(rs.getString("participantes_json"), PARTICIPANTES),
                     semOcorrencia ? null : Instant.ofEpochMilli(ocorrencia), rs.getInt("ativo") == 1,

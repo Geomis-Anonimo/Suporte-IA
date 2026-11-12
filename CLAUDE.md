@@ -65,7 +65,12 @@ Sempre que o usuário confirmar uma reunião (data e horário): criar o evento n
 E-mails dos times ficam em `docs/contatos.json`, agrupados por time. Ao agendar reunião/convidar, usar esse arquivo. **Se algum participante novo (ou sem e-mail no arquivo) entrar numa reunião, perguntar ao usuário se ele tem o e-mail e avisá-lo** de que falta; ao receber, atualizar o JSON.
 
 ## Lembretes (lembretes-api)
-Para "me lembra toda quinta..." ou "marquei reunião sexta 15h", use a API local descrita em [lembretes-api/README.md](lembretes-api/README.md): ela avisa no Discord com participantes e o `.md` de contexto. Os caminhos de `contextoMd` são relativos a `docs/`.
+Para "me lembra toda quinta..." ou "marquei reunião sexta 15h", use a API local descrita em [lembretes-api/README.md](lembretes-api/README.md): ela avisa no Discord. **A API não usa IA nem chave de API: o texto do aviso é escrito por você (Claude), ao cadastrar.**
+
+Regras para o Claude:
+- **Ao cadastrar:** antes do `POST /api/lembretes`, reúna o contexto do assunto em `docs/` (README do projeto, atas, dailies) e na sessão atual; escreva o campo `mensagem` em linguagem natural e humana (o que será abordado, pendências, quem participa, o que o usuário ficou de ver), preencha `participantes` e `contextoMd` (caminho do `.md` principal, relativo a `docs/`). Confirme ao usuário o horário do aviso (`proximoDisparo`).
+- **Manter atualizado:** sempre que entrar informação nova sobre um assunto (nova daily/ata, mudança de escopo, algo que o usuário ficou de ver), liste os lembretes ativos (`GET /api/lembretes?ativo=true`), localize os ligados ao assunto/projeto (mesmo `contextoMd` ou título) e substitua por uma versão atualizada com `PUT /api/lembretes/{id}` (equivale a apagar e salvar de novo, mantendo o id). Avise o usuário do que mudou. Se o assunto foi resolvido/encerrado, ofereça `DELETE`.
+- Se a API não responder em `http://127.0.0.1:8080`, avise e sugira `docker compose up -d` na raiz. Nunca grave a URL do webhook em notas.
 
 ## Projetos
 O índice dos projetos está em `docs/INDEX.md` (local). Abra-o para localizar o README de cada projeto.
