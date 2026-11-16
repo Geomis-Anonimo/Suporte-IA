@@ -1,0 +1,432 @@
+/*
+ * Estilo do interface-grafica, por cima do AtlantaFX (Primer).
+ * Usar SEMPRE as variaveis do tema (-color-*), nunca cores fixas: assim claro e escuro funcionam.
+ */
+
+/* ---------- shell ---------- */
+.sidebar {
+    -fx-background-color: -color-bg-subtle;
+    -fx-border-color: -color-border-default;
+    -fx-border-width: 0 1 0 0;
+    -fx-padding: 16 8 16 8;
+    -fx-spacing: 6;
+    -fx-pref-width: 88;
+}
+
+.sidebar-marca {
+    -fx-padding: 0 0 14 0;
+}
+
+.sidebar-item {
+    -fx-background-color: transparent;
+    -fx-background-radius: 8;
+    -fx-border-color: transparent;
+    -fx-pref-width: 72;
+    -fx-padding: 8 4 8 4;
+    -fx-font-size: 12px;
+    -fx-text-fill: -color-fg-muted;
+    -fx-graphic-text-gap: 4;
+}
+
+.sidebar-item .ikonli-font-icon {
+    -fx-icon-color: -color-fg-muted;
+    -fx-icon-size: 20px;
+}
+
+.sidebar-item:hover {
+    -fx-background-color: -color-bg-default;
+}
+
+.sidebar-item:selected {
+    -fx-background-color: -color-accent-subtle;
+    -fx-text-fill: -color-accent-fg;
+    -fx-font-weight: bold;
+}
+
+.sidebar-item:selected .ikonli-font-icon {
+    -fx-icon-color: -color-accent-fg;
+}
+
+.barra-superior {
+    -fx-padding: 12 20 12 20;
+    -fx-spacing: 12;
+    -fx-alignment: center-left;
+    -fx-background-color: -color-bg-default;
+    -fx-border-color: -color-border-default;
+    -fx-border-width: 0 0 1 0;
+}
+
+.status-api {
+    -fx-spacing: 6;
+    -fx-alignment: center;
+    -fx-padding: 4 12 4 10;
+    -fx-background-color: -color-bg-subtle;
+    -fx-background-radius: 999;
+    -fx-border-color: -color-border-muted;
+    -fx-border-radius: 999;
+}
+
+.status-api .label {
+    -fx-font-size: 12px;
+    -fx-text-fill: -color-fg-muted;
+}
+
+.status-ponto {
+    -fx-fill: -color-fg-subtle;
+}
+
+.status-api.online .status-ponto {
+    -fx-fill: -color-success-emphasis;
+}
+
+.status-api.offline .status-ponto {
+    -fx-fill: -color-danger-emphasis;
+}
+
+.status-api.offline .label {
+    -fx-text-fill: -color-danger-fg;
+}
+
+.conteudo {
+    -fx-background-color: -color-bg-default;
+}
+
+/* ---------- tela de lembretes ---------- */
+.tela {
+    -fx-padding: 16 20 20 20;
+}
+
+.tela > .split-pane {
+    -fx-padding: 0;
+    -fx-background-insets: 0;
+}
+
+.barra-carregando {
+    -fx-opacity: 0.9;
+}
+
+.titulo-celula {
+    -fx-font-weight: bold;
+}
+
+.descricao-celula {
+    -fx-font-size: 12px;
+    -fx-text-fill: -color-fg-muted;
+}
+
+.table-row-cell:inativo {
+    -fx-opacity: 0.55;
+}
+
+.selo {
+    -fx-padding: 2 10 2 10;
+    -fx-background-radius: 999;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.selo-ativo {
+    -fx-background-color: -color-success-muted;
+    -fx-text-fill: -color-success-fg;
+}
+
+.selo-inativo {
+    -fx-background-color: -color-neutral-muted;
+    -fx-text-fill: -color-fg-muted;
+}
+
+.vazio {
+    -fx-spacing: 8;
+    -fx-padding: 24;
+}
+
+.vazio .ikonli-font-icon {
+    -fx-icon-size: 36px;
+    -fx-icon-color: -color-fg-subtle;
+}
+
+.vazio-titulo {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.detalhes-rolagem {
+    -fx-background-color: -color-bg-subtle;
+}
+
+.detalhes-rolagem > .viewport {
+    -fx-background-color: -color-bg-subtle;
+}
+
+.detalhes {
+    -fx-padding: 16;
+}
+
+.detalhes-info {
+    -fx-hgap: 12;
+    -fx-vgap: 6;
+}
+
+.mensagem-detalhe {
+    -fx-font-size: 13px;
+}
+
+.campo-somente-leitura {
+    -fx-font-family: monospace;
+    -fx-font-size: 12px;
+}
+
+/* ---------- textos comuns ---------- */
+.rotulo {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-fg-muted;
+}
+
+.dica {
+    -fx-font-size: 12px;
+    -fx-text-fill: -color-fg-muted;
+}
+
+.secao {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-accent-fg;
+    -fx-padding: 6 0 0 0;
+}
+
+/* ---------- formulario ---------- */
+.form-lembrete > .content {
+    -fx-padding: 0;
+}
+
+.form-corpo {
+    -fx-padding: 16 20 20 20;
+}
+
+.erro-campo {
+    -fx-font-size: 12px;
+    -fx-text-fill: -color-danger-fg;
+}
+
+.banner-erro {
+    -fx-background-color: -color-danger-subtle;
+    -fx-text-fill: -color-danger-fg;
+    -fx-border-color: -color-danger-muted;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 10 12 10 12;
+}
+
+/* ---------- tela de tarefas (board) ---------- */
+.painel-arvore {
+    -fx-padding: 0 12 0 0;
+}
+
+.titulo-arvore {
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-fg-muted;
+    -fx-font-size: 12px;
+}
+
+.arvore-squads {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.arvore-squads .tree-cell {
+    -fx-padding: 5 6 5 6;
+    -fx-background-radius: 6;
+}
+
+.arvore-squads .no-squad .label {
+    -fx-font-weight: bold;
+}
+
+.arvore-squads .no-sem-projeto .label {
+    -fx-text-fill: -color-fg-muted;
+}
+
+.arvore-squads .arquivado .label {
+    -fx-opacity: 0.55;
+}
+
+.contador-arvore {
+    -fx-font-size: 11px;
+    -fx-text-fill: -color-fg-muted;
+    -fx-background-color: -color-neutral-muted;
+    -fx-background-radius: 999;
+    -fx-padding: 0 7 0 7;
+}
+
+.painel-board {
+    -fx-padding: 0 0 0 12;
+}
+
+.coluna-board {
+    -fx-background-color: -color-bg-subtle;
+    -fx-background-radius: 10;
+    -fx-border-color: -color-border-muted;
+    -fx-border-radius: 10;
+    -fx-padding: 10;
+}
+
+.coluna-bloqueado {
+    -fx-background-color: -color-danger-subtle;
+    -fx-border-color: -color-danger-muted;
+}
+
+.titulo-coluna {
+    -fx-font-weight: bold;
+}
+
+.coluna-bloqueado .titulo-coluna {
+    -fx-text-fill: -color-danger-fg;
+}
+
+.contador-coluna {
+    -fx-font-size: 12px;
+    -fx-text-fill: -color-fg-muted;
+    -fx-background-color: -color-neutral-muted;
+    -fx-background-radius: 999;
+    -fx-padding: 1 8 1 8;
+}
+
+.rolagem-coluna,
+.rolagem-coluna > .viewport {
+    -fx-background-color: transparent;
+}
+
+.cartas-coluna {
+    -fx-padding: 2 2 6 2;
+}
+
+.coluna-vazia {
+    -fx-text-fill: -color-fg-subtle;
+    -fx-font-size: 12px;
+    -fx-alignment: center;
+    -fx-padding: 16 0 16 0;
+}
+
+.indicador-drop {
+    -fx-min-height: 4;
+    -fx-pref-height: 4;
+    -fx-max-height: 4;
+    -fx-background-color: -color-accent-emphasis;
+    -fx-background-radius: 2;
+}
+
+.card-tarefa {
+    -fx-background-color: -color-bg-default;
+    -fx-background-radius: 8;
+    -fx-border-color: -color-border-default;
+    -fx-border-width: 1 1 1 4;
+    -fx-border-radius: 8;
+    -fx-padding: 9 10 8 10;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 4, 0, 0, 1);
+}
+
+.card-tarefa:hover {
+    -fx-border-color: -color-accent-muted;
+}
+
+.card-tarefa:selecionado {
+    -fx-border-color: -color-accent-emphasis;
+    -fx-background-color: -color-accent-subtle;
+}
+
+.card-tarefa.prioridade-alta {
+    -fx-border-color: -color-border-default -color-border-default -color-border-default -color-danger-emphasis;
+}
+
+.card-tarefa.prioridade-media {
+    -fx-border-color: -color-border-default -color-border-default -color-border-default -color-warning-emphasis;
+}
+
+.card-tarefa.prioridade-baixa {
+    -fx-border-color: -color-border-default -color-border-default -color-border-default -color-fg-subtle;
+}
+
+.card-tarefa.prioridade-alta:selecionado,
+.card-tarefa.prioridade-media:selecionado,
+.card-tarefa.prioridade-baixa:selecionado {
+    -fx-border-color: -color-accent-emphasis;
+}
+
+.titulo-card {
+    -fx-font-size: 13px;
+}
+
+.card-feito .titulo-card {
+    -fx-text-fill: -color-fg-muted;
+}
+
+.card-feito .titulo-card .text {
+    -fx-strikethrough: true;
+}
+
+.motivo-card {
+    -fx-font-size: 12px;
+    -fx-text-fill: -color-danger-fg;
+}
+
+.motivo-card .ikonli-font-icon {
+    -fx-icon-color: -color-danger-fg;
+}
+
+.chip {
+    -fx-font-size: 11px;
+    -fx-padding: 1 7 1 7;
+    -fx-background-radius: 999;
+}
+
+.chip-projeto {
+    -fx-background-color: -color-accent-subtle;
+    -fx-text-fill: -color-accent-fg;
+}
+
+.chip-tag {
+    -fx-background-color: -color-neutral-muted;
+    -fx-text-fill: -color-fg-muted;
+}
+
+.chip-editavel {
+    -fx-font-size: 12px;
+    -fx-padding: 0 0 0 8;
+}
+
+.rotulo-prioridade {
+    -fx-font-size: 11px;
+    -fx-text-fill: -color-fg-muted;
+}
+
+.prioridade-alta .icone-prioridade,
+.prioridade-alta .rotulo-prioridade {
+    -fx-icon-color: -color-danger-fg;
+    -fx-text-fill: -color-danger-fg;
+}
+
+.prioridade-media .icone-prioridade {
+    -fx-icon-color: -color-warning-fg;
+}
+
+.prioridade-baixa .icone-prioridade {
+    -fx-icon-color: -color-fg-subtle;
+}
+
+.data-card {
+    -fx-font-size: 11px;
+    -fx-text-fill: -color-fg-muted;
+}
+
+.adicionar-rapido {
+    -fx-background-color: transparent;
+    -fx-border-color: -color-border-muted;
+    -fx-border-style: dashed;
+    -fx-border-radius: 6;
+}
+
+.ver-todas {
+    -fx-font-size: 12px;
+}

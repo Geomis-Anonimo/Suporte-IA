@@ -8,7 +8,7 @@ docs/*
 !docs/README.md
 
 # Dados e build locais
-lembretes-api/data/
+app/api/data/
 *.db
 *.db-journal
 target/

@@ -1,11 +1,11 @@
-﻿# Compose central da pasta CLAUDE: cada ideia/servico novo entra aqui como um novo "service".
+﻿# Compose central da pasta CLAUDE: cada servico novo entra aqui como um novo "service".
 # Subir tudo: docker compose up -d --build   (variaveis vem do arquivo .env desta pasta)
 name: claude-servicos
 
 services:
-  lembretes-api:
-    build: ./lembretes-api
-    container_name: lembretes-api
+  api:
+    build: ./app/api
+    container_name: api
     restart: unless-stopped
     ports:
       - "127.0.0.1:8080:8080"   # so acessivel na propria maquina
@@ -13,4 +13,4 @@ services:
       TZ: America/Sao_Paulo
       DISCORD_WEBHOOK_URL: ${DISCORD_WEBHOOK_URL:-}
     volumes:
-      - ./lembretes-api/data:/data   # SQLite fica em lembretes-api/data/lembretes.db
+      - ./app/api/data:/data   # SQLite de todos os modulos em app/api/data/api.db

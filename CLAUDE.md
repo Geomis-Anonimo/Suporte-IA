@@ -1,11 +1,10 @@
 # CLAUDE.md — Base de conhecimento de projetos
 
-Base de conhecimento pessoal: guarda o **contexto de cada projeto** (reuniões, decisões, pendências, debug) para consulta futura e uso como base RAG. As **notas ficam em `docs/`** (não versionadas); o código/serviços ficam fora dela (ex.: `lembretes-api/`).
+Base de conhecimento pessoal: guarda o **contexto de cada projeto** (reuniões, decisões, pendências, debug) para consulta futura e uso como base RAG. As **notas ficam em `docs/`** (não versionadas); o código/serviços ficam fora dela, em `app/`.
 
 ## Primeiro passo: dados do usuário (`init.json`)
 Os dados pessoais **não ficam neste arquivo**. Em toda conversa, leia o [`init.json`](init.json) da raiz (ignorado pelo git) e use:
 - `nome` / `email` / `idioma`: quem é o usuário. Onde este arquivo diz "o usuário", é essa pessoa; trate-a pelo `nome`.
-- `quadro_a_fazer_url`: artifact do quadro "A Fazer" (ver seção abaixo).
 - `times.<time>.meet_fixo`: link fixo e permanente do Meet de cada time (dailies/recorrentes).
 - `glossario`: siglas e nomes internos, inclusive como as transcrições costumam errá-los.
 
@@ -16,8 +15,11 @@ Os dados pessoais **não ficam neste arquivo**. Em toda conversa, leia o [`init.
 CLAUDE/
 ├── CLAUDE.md                      # este arquivo (genérico, versionado)
 ├── init.json / init.example.json  # dados do usuário (o real é local); o exemplo é o modelo
-├── docker-compose.yml             # serviços (ex.: lembretes-api); .env.example -> .env
-├── lembretes-api/                 # código (Spring Boot + SQLite), ver README dele
+├── docker-compose.yml             # serviços (ex.: api); .env.example -> .env
+├── app/                           # todo o código
+│   ├── api/                       # API Spring Boot + SQLite, multi-módulo (shared, lembretes, tarefas), ver README
+│   └── interface-grafica/         # app desktop JavaFX (uma tela por funcionalidade: Lembretes, Tarefas), ver README
+├── prompts/                       # prompts/especificações aprovados antes de desenvolver
 └── docs/                          # TODAS as notas de projeto (local, não versionado)
     ├── INDEX.md                   # índice dos projetos (mantido pelo Claude)
     ├── contatos.json              # e-mails dos times
@@ -37,35 +39,47 @@ CLAUDE/
 - Idioma: o de `init.json` (padrão português BR). Nomes de arquivo em minúsculas, sem acentos, com hífens.
 - Cada reunião: data/participantes, contexto, decisões, testes, pendências (checklist), dicas de debug.
 - Ao adicionar uma reunião, **atualizar o índice e o "Estado atual"** do README do projeto e o `docs/INDEX.md`.
-- **Dailies:** quando o usuário enviar a transcrição de uma daily, criar `docs/<time>/dailies/AAAA-MM-DD-daily.md` (participantes, resumo, impedimentos por pessoa, assuntos, pendências), atualizar o índice em `docs/<time>/dailies/README.md`, criar cards das pendências do usuário e, se o assunto pertencer a um projeto, linkar/atualizar o README dele.
+- **Dailies:** quando o usuário enviar a transcrição de uma daily, criar `docs/<time>/dailies/AAAA-MM-DD-daily.md` (participantes, resumo, impedimentos por pessoa, assuntos, pendências), atualizar o índice em `docs/<time>/dailies/README.md`, criar tarefas no board para as pendências do usuário (ver "Board de tarefas") e, se o assunto pertencer a um projeto, linkar/atualizar o README dele.
 - Transcrições automáticas são ruidosas: marcar inferências incertas com **(?)** e não inventar detalhes.
-- **Nunca gravar segredos** (tokens, secrets, senhas, valores de .env, URLs de webhook) em notas, cards ou arquivos versionados. Registrar só o nome da variável e o que ela faz.
+- **Nunca gravar segredos** (tokens, secrets, senhas, valores de .env, URLs de webhook) em notas, tarefas ou arquivos versionados. Registrar só o nome da variável e o que ela faz.
 - Seções curtas e autocontidas, pensadas para busca semântica (títulos descritivos, termos exatos como nomes de serviços, rotas, variáveis e códigos de erro).
 
 ## Glossário
 Está em `init.json` → `glossario`. Ao ver um termo desconhecido numa transcrição, consulte-o antes de supor; se descobrir um termo novo, proponha acrescentá-lo lá.
 
-## Quadro "A Fazer" (manter atualizado)
-Os afazeres do usuário ficam num quadro simples (artifact) cujo link está em `init.json` → `quadro_a_fazer_url`, com colunas **A FAZER** e **FEITO**. Os cartões ficam na coleção `cards` do banco do artifact (acesso via ferramenta `ArtifactData`, com essa `url`). Se `quadro_a_fazer_url` estiver vazio, ofereça criar o quadro e grave a URL no `init.json`.
+## Board de tarefas (módulo `tarefas` da `api`; manter atualizado)
+Os afazeres do usuário ficam no **board de tarefas** da API local (`http://127.0.0.1:8080`), no estilo Azure Boards: **Squad** (time; slug = pasta `docs/<time>/`) → **Projeto** (slug = pasta `docs/<time>/projects/<projeto>/`; opcional) → **Tarefa**. As colunas são `A_FAZER`, `FAZENDO`, `BLOQUEADO` (exige `motivoBloqueio`) e `FEITO`. O usuário vê e arrasta os cards na tela "Tarefas" da `app/interface-grafica`. Rotas e exemplos estão em [app/api/README.md](app/api/README.md), na seção "Módulo tarefas".
 
 Regras para o Claude, em toda conversa:
-- **Criar o card sempre que identificar algo que o usuário precisa fazer depois** (pendência de reunião, pedido de terceiros, algo dito por ele como "preciso...", "depois eu..."). Não esperar pedido. **Avisar na resposta** que o card foi criado (título curto).
-- **Mover para FEITO** quando o usuário disser que fez, ou quando ele arrastar no quadro. Avisar também.
-- Antes de criar, **listar a coleção** e evitar duplicar card existente. Ao ver cards já em FEITO que foram reabertos, respeitar o estado atual.
-- Formato do documento (`doc_id` curto e único, ex.: `mp-009`): `{title, note?, project?, status: "todo"|"done", createdAt: <ms>, doneAt?: <ms>}`. Título curto e acionável; detalhes em `note`; `project` = nome da pasta do projeto.
-- Ao concluir: `update` com `status: "done"` e `doneAt: <ms>`. Ao reabrir: `status: "todo"` e remover `doneAt` (`{"__delete__": true}`). Sempre usar `if_version` lido na hora.
-- Nunca colocar segredos nos cards. Pendências das atas continuam registradas também na ata; o card é o lembrete.
+- **Criar uma tarefa sempre que identificar algo que o usuário precisa fazer depois** (pendência de reunião ou daily, pedido de terceiros, algo dito por ele como "preciso...", "depois eu..."). Não esperar pedido. **Avisar na resposta** com o título curto e o squad/projeto.
+- **Antes de criar, buscar** para não duplicar: `GET /api/tarefas?squadId=<id>&busca=<palavras>`. Se existir, atualizar em vez de criar. Respeitar o estado atual: se o usuário reabriu ou moveu um card, não desfazer.
+- **Squad e projeto** saem do assunto (a pasta em `docs/`). IDs: `GET /api/squads` e `GET /api/projetos?squadId=<id>`. Se o projeto existe em `docs/` mas não no board, criar antes (`POST /api/projetos` com `slug` = nome da pasta e `contextoMd` = `<time>/projects/<slug>/README.md`). Se a pendência não é de projeto nenhum, criar sem `projetoId` (aparece em "Sem projeto"). Se o time ainda não existe como squad, criar o squad (`slug` = nome da pasta do time).
+- **Campos:**
+  - `titulo` curto e acionável;
+  - detalhes em `descricao`;
+  - `link` = a ata ou daily de origem, como caminho relativo a `docs/` (ou a URL do PR/card);
+  - `tags`: `daily` ou `reuniao` conforme a origem, mais outras úteis (`gmud`, `bug`…);
+  - `prioridade` `ALTA` só quando houver urgência explícita.
+- **Mover** com `POST /api/tarefas/{id}/mover` `{"status": ...}`:
+  - para `FEITO` quando o usuário disser que fez;
+  - para `BLOQUEADO`, com `motivoBloqueio`, quando ele disser que está esperando alguém;
+  - para `FAZENDO` quando ele começar.
+
+  Avisar o usuário em todos os casos.
+- **Acentos (Windows/Git Bash):** mandar o corpo JSON de um **arquivo UTF-8** (`curl --data-binary @arquivo.json -H "Content-Type: application/json; charset=utf-8"`), nunca com `-d '...'` inline, porque o terminal converte os acentos e a API responde 400.
+- Nunca colocar segredos em título, descrição ou link. Pendências das atas continuam registradas também na ata; a tarefa é o lembrete.
+- Se a API não responder, avisar e sugerir `docker compose up -d` na raiz.
 
 ## Reuniões confirmadas (agenda)
-Sempre que o usuário confirmar uma reunião (data e horário): criar o evento no **Google Agenda** com link do **Meet**, e devolver a ele o link e o e-mail/convite. Se a sessão não tiver ferramenta de Google Agenda conectada, **dizer isso** e entregar o link de criação pré-preenchido (calendar.google.com/calendar/render?action=TEMPLATE...) e o texto do convite; nunca afirmar que agendou sem confirmação da ferramenta. Registrar também o card no quadro A Fazer.
+Sempre que o usuário confirmar uma reunião (data e horário): criar o evento no **Google Agenda** com link do **Meet**, e devolver a ele o link e o e-mail/convite. Se a sessão não tiver ferramenta de Google Agenda conectada, **dizer isso** e entregar o link de criação pré-preenchido (calendar.google.com/calendar/render?action=TEMPLATE...) e o texto do convite; nunca afirmar que agendou sem confirmação da ferramenta. Registrar também a tarefa no board (ver "Board de tarefas").
 
 **Dailies / reuniões recorrentes do time: usar o link FIXO, nunca gerar um Meet novo.** O link permanente de cada time está em `init.json` → `times.<time>.meet_fixo` (e repetido na linha "Link (fixo, permanente)" de `docs/<time>/dailies/README.md`). Ao criar/atualizar o evento no Google Agenda: passar `googleMeetUrl` = esse link (e **não** usar `addGoogleMeetUrl`, que cria um link aleatório); colocar o mesmo link também na descrição do convite. Depois de criar, conferir (`get_event`) se o link do evento é o fixo; se vier diferente, corrigir com `update_event` (`googleMeetUrl`). Se o evento já foi enviado com link aleatório, atualizar com o link fixo e avisar o usuário.
 
 ## Contatos (e-mails)
 E-mails dos times ficam em `docs/contatos.json`, agrupados por time. Ao agendar reunião/convidar, usar esse arquivo. **Se algum participante novo (ou sem e-mail no arquivo) entrar numa reunião, perguntar ao usuário se ele tem o e-mail e avisá-lo** de que falta; ao receber, atualizar o JSON.
 
-## Lembretes (lembretes-api)
-Para "me lembra toda quinta..." ou "marquei reunião sexta 15h", use a API local descrita em [lembretes-api/README.md](lembretes-api/README.md): ela avisa no Discord. **A API não usa IA nem chave de API: o texto do aviso é escrito por você (Claude), ao cadastrar.**
+## Lembretes (módulo `lembretes` da `api`)
+Para "me lembra toda quinta..." ou "marquei reunião sexta 15h", use a API local descrita em [app/api/README.md](app/api/README.md) (rotas `/api/lembretes`): ela avisa no Discord. **A API não usa IA nem chave de API: o texto do aviso é escrito por você (Claude), ao cadastrar.**
 
 Regras para o Claude:
 - **Ao cadastrar:** antes do `POST /api/lembretes`, reúna o contexto do assunto em `docs/` (README do projeto, atas, dailies) e na sessão atual; escreva o campo `mensagem` em linguagem natural e humana (o que será abordado, pendências, quem participa, o que o usuário ficou de ver), preencha `participantes` e `contextoMd` (caminho do `.md` principal, relativo a `docs/`). Confirme ao usuário o horário do aviso (`proximoDisparo`).
