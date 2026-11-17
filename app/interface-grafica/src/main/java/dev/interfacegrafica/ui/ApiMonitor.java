@@ -37,6 +37,18 @@ public class ApiMonitor {
         Async.executar(() -> client.listar(true), ok -> status.set(Status.ONLINE), this::informarFalha);
     }
 
+    /** Verificacao sincrona (bloqueante, fora da FX thread): a api respondeu agora? */
+    public boolean respondeAgora() {
+        try {
+            client.listar(true);
+            return true;
+        } catch (ApiOfflineException e) {
+            return false;
+        } catch (Exception e) {
+            return true; // respondeu, mesmo que com erro
+        }
+    }
+
     /** Uma chamada respondeu (mesmo com erro HTTP): a API esta no ar. */
     public void informarSucesso() { status.set(Status.ONLINE); }
 

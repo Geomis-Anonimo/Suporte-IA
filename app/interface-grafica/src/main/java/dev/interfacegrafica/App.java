@@ -7,6 +7,7 @@ import dev.interfacegrafica.config.AppConfig;
 import dev.interfacegrafica.lembretes.LembretesTela;
 import dev.interfacegrafica.shell.MainShell;
 import dev.interfacegrafica.shell.Tela;
+import dev.interfacegrafica.sistema.IniciadorApi;
 import dev.interfacegrafica.ui.ApiMonitor;
 import dev.interfacegrafica.ui.Estilos;
 import dev.interfacegrafica.ui.Logo;
@@ -34,7 +35,8 @@ public class App extends Application {
                 // novas telas aqui
         );
 
-        MainShell shell = new MainShell(telas, monitor, notificacoes);
+        MainShell shell = new MainShell(telas, monitor, notificacoes,
+                new IniciadorApi(AppConfig.raizClaude(), monitor::respondeAgora));
         Scene cena = new Scene(shell.raiz(), 1200, 760);
         cena.getStylesheets().add(Estilos.css());
 

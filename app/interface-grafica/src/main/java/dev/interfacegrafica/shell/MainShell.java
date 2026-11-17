@@ -1,8 +1,11 @@
 package dev.interfacegrafica.shell;
 
 import atlantafx.base.theme.Styles;
+import dev.interfacegrafica.sistema.IniciadorApi;
 import dev.interfacegrafica.ui.ApiMonitor;
+import dev.interfacegrafica.ui.Async;
 import dev.interfacegrafica.ui.Logo;
+import javafx.application.Platform;
 import javafx.scene.image.ImageView;
 import dev.interfacegrafica.ui.Notificacoes;
 import dev.interfacegrafica.ui.Tema;
@@ -27,14 +30,20 @@ import org.kordamp.ikonli.javafx.FontIcon;
 
 /** Janela principal: menu lateral, barra superior (status da API + tema) e area de conteudo. */
 public class MainShell {
-    private static final String DICA_OFFLINE = "Rode \"docker compose up -d\" na pasta CLAUDE";
+    private static final String DICA_OFFLINE = "Clique em \"Iniciar API\" (ou rode \"docker compose up -d\" na pasta CLAUDE)";
 
     private final StackPane raiz;
     private final StackPane conteudo = new StackPane();
     private final Label tituloTela = new Label();
     private final ToggleGroup grupo = new ToggleGroup();
+    private final IniciadorApi iniciador;
+    private final Notificacoes notificacoes;
+    private final Button iniciarApi = new Button("Iniciar API", new FontIcon(Feather.PLAY));
+    private boolean iniciando;
 
-    public MainShell(List<Tela> telas, ApiMonitor monitor, Notificacoes notificacoes) {
+    public MainShell(List<Tela> telas, ApiMonitor monitor, Notificacoes notificacoes, IniciadorApi iniciador) {
+        this.iniciador = iniciador;
+        this.notificacoes = notificacoes;
         BorderPane layout = new BorderPane();
         layout.setLeft(menuLateral(telas));
         layout.setTop(barraSuperior(monitor));
@@ -87,8 +96,15 @@ public class MainShell {
         status.getStyleClass().add("status-api");
         Tooltip dica = new Tooltip();
         Tooltip.install(status, dica);
-        monitor.statusProperty().addListener((obs, a, s) -> atualizarStatus(s, status, statusTexto, dica));
+        iniciarApi.getStyleClass().addAll(Styles.SMALL, Styles.ACCENT);
+        iniciarApi.setTooltip(new Tooltip("Abre o Docker Desktop, se precisar, e roda \"docker compose up -d\" na pasta CLAUDE"));
+        iniciarApi.setOnAction(e -> iniciarApi(monitor));
+        monitor.statusProperty().addListener((obs, a, s) -> {
+            atualizarStatus(s, status, statusTexto, dica);
+            atualizarBotaoIniciar(s);
+        });
         atualizarStatus(monitor.statusProperty().get(), status, statusTexto, dica);
+        atualizarBotaoIniciar(monitor.statusProperty().get());
 
         Button tema = new Button();
         tema.getStyleClass().addAll(Styles.BUTTON_ICON, Styles.FLAT);
@@ -98,9 +114,41 @@ public class MainShell {
         Tema.escuroProperty().addListener((obs, a, b) -> iconeTema.run());
         tema.setOnAction(e -> Tema.alternar());
 
-        HBox barra = new HBox(tituloTela, espaco, status, tema);
+        HBox barra = new HBox(tituloTela, espaco, iniciarApi, status, tema);
         barra.getStyleClass().add("barra-superior");
         return barra;
+    }
+
+    private void atualizarBotaoIniciar(ApiMonitor.Status s) {
+        boolean mostrar = iniciando || s == ApiMonitor.Status.OFFLINE;
+        iniciarApi.setVisible(mostrar);
+        iniciarApi.setManaged(mostrar);
+    }
+
+    private void iniciarApi(ApiMonitor monitor) {
+        if (iniciando) return;
+        iniciando = true;
+        iniciarApi.setDisable(true);
+        Async.executar(() -> {
+            iniciador.iniciar(etapa -> Platform.runLater(() -> iniciarApi.setText(etapa)));
+            return true;
+        }, ok -> {
+            fimIniciar(monitor);
+            notificacoes.sucesso("API iniciada");
+            monitor.informarSucesso();
+        }, erro -> {
+            fimIniciar(monitor);
+            notificacoes.erro(erro instanceof IniciadorApi.FalhaAoIniciar ? erro.getMessage()
+                    : "Não consegui iniciar a API: " + erro.getMessage());
+            monitor.verificar();
+        });
+    }
+
+    private void fimIniciar(ApiMonitor monitor) {
+        iniciando = false;
+        iniciarApi.setDisable(false);
+        iniciarApi.setText("Iniciar API");
+        atualizarBotaoIniciar(monitor.statusProperty().get());
     }
 
     private static void atualizarStatus(ApiMonitor.Status s, HBox caixa, Label texto, Tooltip dica) {

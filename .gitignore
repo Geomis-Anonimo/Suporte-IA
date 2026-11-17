@@ -12,3 +12,7 @@ app/api/data/
 *.db
 *.db-journal
 target/
+
+# Executavel gerado por app/interface-grafica/empacotar.ps1
+/Interface Grafica/
+/Interface Grafica.lnk

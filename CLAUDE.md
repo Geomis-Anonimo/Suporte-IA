@@ -68,7 +68,7 @@ Regras para o Claude, em toda conversa:
   Avisar o usuário em todos os casos.
 - **Acentos (Windows/Git Bash):** mandar o corpo JSON de um **arquivo UTF-8** (`curl --data-binary @arquivo.json -H "Content-Type: application/json; charset=utf-8"`), nunca com `-d '...'` inline, porque o terminal converte os acentos e a API responde 400.
 - Nunca colocar segredos em título, descrição ou link. Pendências das atas continuam registradas também na ata; a tarefa é o lembrete.
-- Se a API não responder, avisar e sugerir `docker compose up -d` na raiz.
+- Se a API não responder, avisar e sugerir `docker compose up -d` na raiz (ou o botão "Iniciar API" do executável `Interface Grafica.lnk`).
 
 ## Reuniões confirmadas (agenda)
 Sempre que o usuário confirmar uma reunião (data e horário): criar o evento no **Google Agenda** com link do **Meet**, e devolver a ele o link e o e-mail/convite. Se a sessão não tiver ferramenta de Google Agenda conectada, **dizer isso** e entregar o link de criação pré-preenchido (calendar.google.com/calendar/render?action=TEMPLATE...) e o texto do convite; nunca afirmar que agendou sem confirmação da ferramenta. Registrar também a tarefa no board (ver "Board de tarefas").
