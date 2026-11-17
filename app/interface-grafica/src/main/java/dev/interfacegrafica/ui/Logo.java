@@ -7,8 +7,8 @@ import javafx.scene.image.Image;
 
 /** Logo do app: favicon-light.png no tema claro, favicon-dark.png no escuro. */
 public final class Logo {
-    private static final Image CLARO = carregar("favicon-light.png");
-    private static final Image ESCURO = carregar("favicon-dark.png");
+    private static final Image CLARO = carregar("favicon-dark.png");
+    private static final Image ESCURO = carregar("favicon-light.png");
     private static final ObjectBinding<Image> ATUAL =
             Bindings.createObjectBinding(() -> Tema.escuroProperty().get() ? ESCURO : CLARO, Tema.escuroProperty());
 
